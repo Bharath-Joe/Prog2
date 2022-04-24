@@ -8,10 +8,11 @@ def main():
     if algorithm not in algorithmList:
         algorithm = "FIFO"
     quantum = info[2]
-    if len(quantum) == 0:
+    if len(quantum) == 0 or not quantum.isdigit():
         quantum = 1
     else:
-        quantum = int(quantum)    
+        quantum = int(quantum)
+
     if algorithm == "SRTN":
         SRTN(fileName)
     elif algorithm == "FIFO":
@@ -46,7 +47,6 @@ def readFileContents(inputFile):
     f = open(inputFile, "r")
     content = f.read()
     process_list = content.split("\n")
-    print(process_list)
     for process in process_list:
         if process == "":
             continue
@@ -66,8 +66,44 @@ def SRTN(inputFile):
 
 def FIFO(inputFile):
     print("You are in FIFO function.")
+    gantChart = []
+    waitTime = {}
+    completionTime = {}
+    turnAroundTime = {}
+    startTime = {}
+    sumTAT = 0
+    sumWT = 0
     print("File name: " + inputFile)
-    print(readFileContents(inputFile))
+    jobDict = readFileContents(inputFile)
+    # print("Job: (Burst Time, Arrival Time)")
+    # print(jobDict)
+    for job in jobDict:
+        for i in range(jobDict[job][0]):
+            if jobDict[job][1] > len(gantChart):
+                for j in range(jobDict[job][1] - len(gantChart)):
+                    gantChart.append("IDLE")
+            gantChart.append(job)
+        completionTime[job] = len(gantChart)
+    print("gantChart:", end=" ")
+    print(gantChart)
+    for job in jobDict:
+        startTime[job] = gantChart.index(job)
+        turnAroundTime[job] = completionTime[job] - jobDict[job][1]
+        waitTime[job] = startTime[job] - jobDict[job][1]
+        sumWT += waitTime[job]
+        sumTAT += turnAroundTime[job]
+        print("Job %3d -- Turnaround %3.2f  Wait %3.2f"%(job, turnAroundTime[job], waitTime[job]))
+    # print("Start Time:", end=" ")
+    # print(startTime)
+    # print("Completion Time:", end=" ")
+    # print(completionTime)
+    # print("Turn-Around Time:", end=" ")
+    # print(turnAroundTime)
+    # print("Wait Time:", end=" ")
+    # print(waitTime)
+    avgWT = sumWT / len(jobDict)
+    avgTAT = sumTAT / len(jobDict)
+    print("Average -- Turnaround %3.2f  Wait %3.2f" % (avgTAT, avgWT))
 
 def RR(inputFile, quantum):
     print("You are in RR function.")
