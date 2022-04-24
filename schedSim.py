@@ -75,8 +75,8 @@ def FIFO(inputFile):
     sumWT = 0
     print("File name: " + inputFile)
     jobDict = readFileContents(inputFile)
-    # print("Job: (Burst Time, Arrival Time)")
-    # print(jobDict)
+    print("Job: (Burst Time, Arrival Time)")
+    print(jobDict)
     for job in jobDict:
         for i in range(jobDict[job][0]):
             if jobDict[job][1] > len(gantChart):
