@@ -1,3 +1,6 @@
+
+   
+from cProfile import run
 import sys
 
 def main():
@@ -75,8 +78,8 @@ def FIFO(inputFile):
     sumWT = 0
     print("File name: " + inputFile)
     jobDict = readFileContents(inputFile)
-    # print("Job: (Burst Time, Arrival Time)")
-    # print(jobDict)
+    print("Job: (Burst Time, Arrival Time)")
+    print(jobDict)
     for job in jobDict:
         for i in range(jobDict[job][0]):
             if jobDict[job][1] > len(gantChart):
@@ -110,24 +113,32 @@ def RR(inputFile, quantum):
     print("File name: " + inputFile)
     print("Quantum Value: ", quantum)
     mydict = readFileContents(inputFile)
-    # for key in mydict:
-    #     print(mydict[key])
-    # print(len(mydict))
-    # print(mydict[0])
-    # temp = []
-    # temp.append(mydict[0][0] - 1)
-    # temp.append(mydict[0][1])
-
-    # mydict.update({0 : temp})
     print(mydict)
 
     num_left = len(mydict)
     running_process = 0
     process_executions = []
+    cur_time = 0
+
     while(num_left > 0):
         quant_copy = quantum
+        flag = False
         while(quant_copy > 0):
+            flag = False
             if mydict[running_process][0] <= 0:
+                break
+            elif cur_time < mydict[running_process][1] and num_left > 1:
+                num_idle = 1
+                for i in range(0, len(mydict)):
+                    if cur_time < mydict[i][1] and i != running_process:
+                        num_idle += 1
+                if num_idle == num_left:
+                    process_executions.append("IDLE")
+                    flag = True
+                break
+            elif cur_time < mydict[running_process][1]:
+                process_executions.append("IDLE")
+                flag = True
                 break
             print("[P" + str(running_process) + "]", end = "")
             process_executions.append(running_process)
@@ -138,11 +149,16 @@ def RR(inputFile, quantum):
             if mydict[running_process][0] == 0:
                 num_left -= 1
             quant_copy -= 1
+            cur_time += 1
         if(running_process == len(mydict) - 1):
             running_process = 0
         else:
             running_process += 1
+        if flag:
+            cur_time += 1
+
     print()
+
     end_time = {}
     turnaround_times = {}
     wait_time = {}
@@ -161,14 +177,13 @@ def RR(inputFile, quantum):
     for i in range(0, len(end_time)):
         turn_time = end_time[i] - mydict[i][1]
         turnaround_times.update({i : turn_time})
-
     
     mydict = readFileContents(inputFile) # reset vals of mydict
     for i in range(0, len(mydict)):
         wait = turnaround_times[i] - mydict[i][0]
         wait_time.update({i : wait})
     
-
+    print("gantChart:", process_executions)
     print("Process \t wait \t turn-around")
     avg_turnaround = 0
     avg_wait = 0
@@ -182,4 +197,3 @@ def RR(inputFile, quantum):
 
 if __name__ == '__main__':
     main()
-    
