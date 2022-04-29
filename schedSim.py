@@ -80,10 +80,8 @@ def FIFO(inputFile):
     startTime = {}
     sumTAT = 0
     sumWT = 0
-    print("File name: " + inputFile)
     jobDict = readFileContents(inputFile)
-    print("Job: (Burst Time, Arrival Time)")
-    print(jobDict)
+
     for job in jobDict:
         for i in range(jobDict[job][0]):
             if jobDict[job][1] > len(gantChart):
@@ -91,8 +89,7 @@ def FIFO(inputFile):
                     gantChart.append("IDLE")
             gantChart.append(job)
         completionTime[job] = len(gantChart)
-    print("gantChart:", end=" ")
-    print(gantChart)
+
     for job in jobDict:
         startTime[job] = gantChart.index(job)
         turnAroundTime[job] = completionTime[job] - jobDict[job][1]
@@ -100,32 +97,19 @@ def FIFO(inputFile):
         sumWT += waitTime[job]
         sumTAT += turnAroundTime[job]
         print("Job %3d -- Turnaround %3.2f  Wait %3.2f"%(job, turnAroundTime[job], waitTime[job]))
-    # print("Start Time:", end=" ")
-    # print(startTime)
-    # print("Completion Time:", end=" ")
-    # print(completionTime)
-    # print("Turn-Around Time:", end=" ")
-    # print(turnAroundTime)
-    # print("Wait Time:", end=" ")
-    # print(waitTime)
     avgWT = sumWT / len(jobDict)
     avgTAT = sumTAT / len(jobDict)
     print("Average -- Turnaround %3.2f  Wait %3.2f" % (avgTAT, avgWT))
 
 def RR(inputFile, quantum):
-    print("File name: " + inputFile)
-    print("Quantum Value: ", quantum)
     mydict = readFileContents(inputFile)
-    print(mydict)
-
     num_left = len(mydict)
     process_executions = []
     cur_time = 0
     before_cur_time = 0
-
     queue = []
-
-    queue.append(0) # process 0
+    if mydict[0][1] == 0:
+        queue.append(0) # process 0
     while len(queue) > 0 or num_left > 0: 
         if num_left != 0:
             while mydict[len(mydict) - num_left][1] > cur_time:
@@ -134,7 +118,9 @@ def RR(inputFile, quantum):
             if len(process_executions) > 0:
                 if process_executions[len(process_executions) - 1] == "IDLE":
                     queue.append(len(mydict) - num_left)
+
         before_cur_time = cur_time
+
         for i in range(0, quantum):
             if mydict[queue[0]][0] > 0 and mydict[queue[0]][1] <= cur_time:
                 process_executions.append(queue[0])
@@ -151,7 +137,7 @@ def RR(inputFile, quantum):
         for key in mydict:
             if mydict[key][1] <= cur_time and mydict[key][1] > before_cur_time:
                 queue.append(key)
-        
+
         if mydict[queue[0]][0] > 0:
             queue.append(queue[0])
         queue.pop(0)
@@ -170,7 +156,7 @@ def RR(inputFile, quantum):
                 end_times.update({i : x + 1})
                 break
         i += 1
-    
+
     for i in range(0, len(end_times)):
         turn_time = end_times[i] - mydict[i][1]
         turnaround_times.update({i : turn_time})
@@ -179,9 +165,8 @@ def RR(inputFile, quantum):
     for i in range(0, len(mydict)):
         wait = turnaround_times[i] - mydict[i][0]
         wait_time.update({i : wait})
-
-
-    print("gantChart:", process_executions)
+    # print("gantChart:", process_executions)
+    
     avg_turnaround = 0
     avg_wait = 0
     for i in range(0, len(mydict)):
