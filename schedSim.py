@@ -47,7 +47,11 @@ def extractCommandLineArgs(arguments):
 def readFileContents(inputFile):
     mydict = {}
     listOfJobs = []
-    f = open(inputFile, "r")
+    try:
+        f = open(inputFile, "r")
+    except FileNotFoundError:
+        print("Wrong file or file path")
+        exit()
     content = f.read()
     process_list = content.split("\n")
     for process in process_list:
@@ -68,7 +72,6 @@ def SRTN(inputFile):
     print(readFileContents(inputFile))
 
 def FIFO(inputFile):
-    print("You are in FIFO function.")
     gantChart = []
     waitTime = {}
     completionTime = {}
@@ -109,7 +112,6 @@ def FIFO(inputFile):
     print("Average -- Turnaround %3.2f  Wait %3.2f" % (avgTAT, avgWT))
 
 def RR(inputFile, quantum):
-    print("You are in RR function.")
     print("File name: " + inputFile)
     print("Quantum Value: ", quantum)
     mydict = readFileContents(inputFile)
