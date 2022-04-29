@@ -1,6 +1,7 @@
 
    
 from cProfile import run
+from re import M
 import sys
 
 def main():
@@ -118,81 +119,75 @@ def RR(inputFile, quantum):
     print(mydict)
 
     num_left = len(mydict)
-    running_process = 0
     process_executions = []
     cur_time = 0
+    before_cur_time = 0
 
-    while(num_left > 0):
-        quant_copy = quantum
-        flag = False
-        while(quant_copy > 0):
-            flag = False
-            if mydict[running_process][0] <= 0:
-                break
-            elif cur_time < mydict[running_process][1] and num_left > 1:
-                num_idle = 1
-                for i in range(0, len(mydict)):
-                    if cur_time < mydict[i][1] and i != running_process:
-                        num_idle += 1
-                if num_idle == num_left:
-                    process_executions.append("IDLE")
-                    flag = True
-                break
-            elif cur_time < mydict[running_process][1]:
+    queue = []
+
+    queue.append(0) # process 0
+    while len(queue) > 0 or num_left > 0: 
+        if num_left != 0:
+            while mydict[len(mydict) - num_left][1] > cur_time:
                 process_executions.append("IDLE")
-                flag = True
+                cur_time += 1
+            if len(process_executions) > 0:
+                if process_executions[len(process_executions) - 1] == "IDLE":
+                    queue.append(len(mydict) - num_left)
+        before_cur_time = cur_time
+        for i in range(0, quantum):
+            if mydict[queue[0]][0] > 0 and mydict[queue[0]][1] <= cur_time:
+                process_executions.append(queue[0])
+                temp = []
+                temp.append(mydict[queue[0]][0] - 1)
+                temp.append(mydict[queue[0]][1])
+                mydict.update({queue[0] : temp})
+                if (mydict[queue[0]][0]) == 0:
+                    num_left -= 1
+                cur_time += 1
+            else:
                 break
-            print("[P" + str(running_process) + "]", end = "")
-            process_executions.append(running_process)
-            temp = []
-            temp.append(mydict[running_process][0] - 1)
-            temp.append(mydict[running_process][1])
-            mydict.update({running_process : temp})
-            if mydict[running_process][0] == 0:
-                num_left -= 1
-            quant_copy -= 1
-            cur_time += 1
-        if(running_process == len(mydict) - 1):
-            running_process = 0
-        else:
-            running_process += 1
-        if flag:
-            cur_time += 1
 
-    print()
-
-    end_time = {}
+        for key in mydict:
+            if mydict[key][1] <= cur_time and mydict[key][1] > before_cur_time:
+                queue.append(key)
+        
+        if mydict[queue[0]][0] > 0:
+            queue.append(queue[0])
+        queue.pop(0)
+        
+    end_times = {}
     turnaround_times = {}
     wait_time = {}
     for i in range(0, len(mydict)):
         turnaround_times.update({i : 0})
-        end_time.update({i : 0})
+        end_times.update({i : 0})
         wait_time.update({i : 0})
     i = 0
     while(i < len(mydict)):
         for x in range(len(process_executions) - 1, -1, -1):
             if process_executions[x] == i:
-                end_time.update({i : x + 1})
+                end_times.update({i : x + 1})
                 break
         i += 1
-
-    for i in range(0, len(end_time)):
-        turn_time = end_time[i] - mydict[i][1]
-        turnaround_times.update({i : turn_time})
     
+    for i in range(0, len(end_times)):
+        turn_time = end_times[i] - mydict[i][1]
+        turnaround_times.update({i : turn_time})
+
     mydict = readFileContents(inputFile) # reset vals of mydict
     for i in range(0, len(mydict)):
         wait = turnaround_times[i] - mydict[i][0]
         wait_time.update({i : wait})
-    
+
+
     print("gantChart:", process_executions)
-    print("Process \t wait \t turn-around")
     avg_turnaround = 0
     avg_wait = 0
     for i in range(0, len(mydict)):
-        print(str(i) + "  \t\t" + str(wait_time[i]) + "  \t\t" +  str(turnaround_times[i]))
         avg_wait += wait_time[i]
         avg_turnaround += turnaround_times[i]
+        print("Job %3d -- Turnaround %3.2f  Wait %3.2f"%(i, turnaround_times[i], wait_time[i]))
     avg_turnaround /= len(mydict)
     avg_wait /= len(mydict)
     print("Average - - Turnaround %3.2f Wait %3.2f" % (avg_turnaround, avg_wait))
