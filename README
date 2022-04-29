@@ -1,4 +1,12 @@
 Name: Bharath & Ameya
-Special Instructions: None
+Special Instructions: 
+
+To run this program:
+
+python3 schedSim.py <filename> -p <ALGORITHM> -q <QUANTUM>
+----------------------------------------------------------
+Assuming the job file will always be the first argument.
+The options (-p and -q) can be taken in any order.
+
 Answer to Questions:
     1. 
