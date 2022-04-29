@@ -9,4 +9,13 @@ Assuming the job file will always be the first argument.
 The options (-p and -q) can be taken in any order.
 
 Answer to Questions:
-    1. 
+    1. If burst times increase with each scheduled job, the turnaround times for SRTN and FIFO will
+       be identical. Also, if all job burst times are identical, then turnaround times will be identical as well.
+    2. If the quantum value is equal to the burst times of all jobs, then response times for
+       SRTN and RR are identical, since turnaround times and wait times are also identical in this case.
+    3. As job times increase, response times also increase. However we cannot demonstrate
+       this in our simulator directly, since we finish the execution of all jobs before 
+       printing out the entire output. If we instead printed out the jobs as they were executed in real
+       time, we could demonstrate this.
+    4. As the quantum time increases, so does the response time for RR. 
+       Worst-case equation given N jobs: ((N - 1) * q) / N
