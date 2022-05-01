@@ -181,7 +181,7 @@ def RR(inputFile, quantum):
     queue = []
     if mydict[0][1] == 0:
         queue.append(0) # process 0
-    print(mydict)
+    # print(mydict)
     while len(queue) > 0 or num_left > 0: 
         if num_left != 0:
             while mydict[len(mydict) - num_left][1] > cur_time:

@@ -1,4 +1,4 @@
-Name: Bharath & Ameya
+Name: Bharath S. & Ameya M.
 Special Instructions: 
 
 To run this program:
@@ -8,7 +8,7 @@ python3 schedSim.py <filename> -p <ALGORITHM> -q <QUANTUM>
 Assuming the job file will always be the first argument.
 The options (-p and -q) can be taken in any order.
 
-Answer to Questions:
+Answers to Questions:
     1. If burst times increase with each scheduled job, the turnaround times for SRTN and FIFO will
        be identical. Also, if all job burst times are identical, then turnaround times will be identical as well.
     2. If the quantum value is equal to the burst times of all jobs, then response times for
