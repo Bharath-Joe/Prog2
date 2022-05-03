@@ -206,7 +206,7 @@ def RR(inputFile, quantum):
                 break
 
         for key in mydict:
-            if mydict[key][1] <= cur_time and mydict[key][1] >= before_cur_time and key != queue[0]:
+            if mydict[key][1] <= cur_time and mydict[key][1] >= before_cur_time and key != queue[0] and key not in queue:
                 queue.append(key)
 
         if mydict[queue[0]][0] > 0:
