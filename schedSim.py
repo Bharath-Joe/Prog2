@@ -236,7 +236,7 @@ def RR(inputFile, quantum):
     for i in range(0, len(mydict)):
         wait = turnaround_times[i] - mydict[i][0]
         wait_time.update({i : wait})
-    print(process_executions)
+    # print(process_executions)
     avg_turnaround = 0
     avg_wait = 0
     for i in range(0, len(mydict)):
