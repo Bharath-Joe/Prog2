@@ -174,7 +174,7 @@ def RR(inputFile, quantum):
     print("You are in RR function w/ quantum =", quantum)
     print("File name: " + inputFile)
     mydict = readFileContents(inputFile)
-    print(mydict)
+    #print(mydict)
     num_left = len(mydict)
     process_executions = []
     cur_time = 0
@@ -220,7 +220,7 @@ def RR(inputFile, quantum):
                 queue.append(key)
         if mydict[job][0] > 0 and job not in queue:
             queue.append(job)
-        print("Q:", queue)
+        #print("Q:", queue)
 
         # for key in mydict:
         #     if mydict[key][1] <= cur_time and mydict[key][1] >= before_cur_time and key != queue[0] and key not in queue:
@@ -229,7 +229,7 @@ def RR(inputFile, quantum):
         #     queue.append(queue[0])
         # queue.pop(0)
 
-    print("PE:", process_executions)
+    #print("PE:", process_executions)
     end_times = {}
     turnaround_times = {}
     wait_time = {}
