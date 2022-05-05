@@ -174,6 +174,7 @@ def RR(inputFile, quantum):
     print("You are in RR function w/ quantum =", quantum)
     print("File name: " + inputFile)
     mydict = readFileContents(inputFile)
+    print(mydict)
     num_left = len(mydict)
     process_executions = []
     cur_time = 0
@@ -193,8 +194,11 @@ def RR(inputFile, quantum):
         before_cur_time = cur_time
 
         for i in range(0, quantum):
+            #print(queue)
             if mydict[queue[0]][0] > 0 and mydict[queue[0]][1] <= cur_time:
                 process_executions.append(queue[0])
+                #print("Queue:", queue)
+                #print("PE: ", process_executions)
                 temp = []
                 temp.append(mydict[queue[0]][0] - 1)
                 temp.append(mydict[queue[0]][1])
@@ -205,14 +209,27 @@ def RR(inputFile, quantum):
             else:
                 break
 
-        for key in mydict:
-            if mydict[key][1] <= cur_time and mydict[key][1] >= before_cur_time and key != queue[0] and key not in queue:
-                queue.append(key)
-
-        if mydict[queue[0]][0] > 0:
-            queue.append(queue[0])
+        job = queue[0]
+        #print(job)
         queue.pop(0)
-        
+        for key in mydict:
+            if mydict[key][1] == cur_time and mydict[job][0] > 0 and key != job:
+                queue.append(job)
+                queue.append(key)
+            elif mydict[key][1] < cur_time and mydict[key][1] >= before_cur_time and key not in queue and key != job:
+                queue.append(key)
+        if mydict[job][0] > 0 and job not in queue:
+            queue.append(job)
+        print("Q:", queue)
+
+        # for key in mydict:
+        #     if mydict[key][1] <= cur_time and mydict[key][1] >= before_cur_time and key != queue[0] and key not in queue:
+        #         queue.append(key)
+        # if mydict[queue[0]][0] > 0:
+        #     queue.append(queue[0])
+        # queue.pop(0)
+
+    print("PE:", process_executions)
     end_times = {}
     turnaround_times = {}
     wait_time = {}
